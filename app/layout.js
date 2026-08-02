@@ -1,5 +1,7 @@
-import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/Toast";
+import ToastContainer from "@/components/ToastContainer";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -13,24 +15,28 @@ const body = Inter({
   variable: "--font-body",
 });
 
-const tag = IBM_Plex_Mono({
+const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-tag",
+  variable: "--font-mono",
 });
 
 const brand = process.env.NEXT_PUBLIC_BRAND_NAME || "PAKEINAJA";
 
 export const metadata = {
   title: `${brand} — Cardigan enak dipake, harga bersahabat`,
-  description:
-    "Toko online cardigan. Lihat detail, cek stok, dan langsung tanya via WhatsApp.",
+  description: "Toko online cardigan. Lihat detail, cek stok, dan langsung tanya via WhatsApp.",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${display.variable} ${body.variable} ${tag.variable}`}>
-      <body className="min-h-screen bg-pine-950">{children}</body>
+    <html lang="id" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+      <body className="min-h-screen bg-[var(--color-bg)]">
+        <ToastProvider>
+          {children}
+          <ToastContainer />
+        </ToastProvider>
+      </body>
     </html>
   );
 }
