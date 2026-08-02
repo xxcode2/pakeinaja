@@ -1,21 +1,16 @@
-"use client";
-
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Gallery from "@/components/Gallery";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { getProduct } from "@/lib/kv";
-import { formatRupiah, buildWaLink } from "@/lib/whatsapp";
+
+export const dynamic = "force-dynamic";
 
 export default async function ProductPage({ params }) {
   const product = await getProduct(params.id);
   if (!product) notFound();
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-  const waLink = buildWaLink({
-    productName: product.name,
-    price: product.price,
-    url: siteUrl ? `${siteUrl}/produk/${product.id}` : undefined,
-  });
 
   return (
     <main>
@@ -28,7 +23,7 @@ export default async function ProductPage({ params }) {
             {product.name}
           </h1>
           <p className="mt-2 font-mono text-xl text-mustard-500">
-            {formatRupiah(product.price)}
+            Rp{product.price.toLocaleString("id-ID")}
           </p>
 
           {product.sold && (
@@ -43,19 +38,7 @@ export default async function ProductPage({ params }) {
             </p>
           )}
 
-          <a
-            href={waLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`mt-8 flex w-full items-center justify-center gap-2 rounded-tag px-5 py-3 font-display text-sm font-medium transition-colors sm:w-auto sm:px-8 ${
-              product.sold
-                ? "cursor-not-allowed bg-pine-800 text-bone-200/30"
-                : "bg-sage-500 text-pine-950 hover:bg-sage-400"
-            }`}
-            onClick={(e) => product.sold && e.preventDefault()}
-          >
-            {product.sold ? "Sudah terjual" : "Tanya via WhatsApp"}
-          </a>
+          <WhatsAppButton product={product} siteUrl={siteUrl} />
         </div>
       </section>
     </main>
