@@ -36,7 +36,7 @@ export async function POST(req) {
 
     // Upload directly to Vercel Blob from server (no CORS issues)
     const blob = await put(pathname, file, {
-      access: "public",
+      access: "private",
       addRandomSuffix: false,
     });
 
