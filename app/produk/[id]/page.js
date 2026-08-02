@@ -1,10 +1,10 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Gallery from "@/components/Gallery";
 import { getProduct } from "@/lib/kv";
 import { formatRupiah, buildWaLink } from "@/lib/whatsapp";
-
-export const dynamic = "force-dynamic";
 
 export default async function ProductPage({ params }) {
   const product = await getProduct(params.id);
