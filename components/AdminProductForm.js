@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { upload } from "@vercel/blob/client";
 
 export default function AdminProductForm({ initial, onClose, onSaved }) {
   const isEdit = Boolean(initial);
@@ -25,11 +24,18 @@ export default function AdminProductForm({ initial, onClose, onSaved }) {
     try {
       for (let i = 0; i < files.length; i++) {
         setUploadProgress(`Mengunggah foto ${i + 1} dari ${files.length}...`);
-        const blob = await upload(files[i].name, files[i], {
-          access: "public",
-          handleUploadUrl: "/api/upload",
+        const formData = new FormData();
+        formData.append("file", files[i]);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
         });
-        uploaded.push(blob.url);
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Upload gagal.");
+
+        uploaded.push(data.url);
       }
       setPhotos((prev) => [...prev, ...uploaded]);
     } catch (err) {
@@ -152,38 +158,51 @@ export default function AdminProductForm({ initial, onClose, onSaved }) {
                     <button
                       type="button"
                       onClick={() => removePhoto(url)}
-                      className="absolute right-0 top-0 bg-pine-950/80 px-1 font-mono text-[10px] text-brick-500"
+                      className="absolute top-1 right-1 rounded-full bg-pine-950/80 p-1 text-bone-100 hover:bg-mustard-500 transition-colors"
+                      aria-label="Hapus foto"
                     >
-                      x
+                      ×
                     </button>
                   </div>
                 ))}
               </div>
             )}
 
-            <label className="mt-2 block cursor-pointer rounded-tag stitch-border px-3 py-3 text-center font-mono text-xs text-bone-200/50 hover:text-bone-200">
-              {uploading ? uploadProgress || "Mengunggah..." : "+ Tambah foto"}
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFiles}
-                disabled={uploading}
-                className="hidden"
-              />
-            </label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              onChange={handleFiles}
+              disabled={uploading}
+              className="mt-2 w-full text-sm text-bone-200/70 file:mr-3 file:rounded-tag file:border-bone-200/15 file:bg-pine-950 file:px-3 file:py-1 file:text-xs file:font-mono hover:file:bg-mustard-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            {uploadProgress && (
+              <p className="mt-1 text-xs text-mustard-500">{uploadProgress}</p>
+            )}
+            {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+            <p className="mt-1 text-xs text-bone-200/40">
+              Maks 15MB per foto. Format: JPG, PNG, WebP, GIF.
+            </p>
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 rounded-tag bg-mustard-500 px-4 py-2 text-sm font-bold text-pine-950 hover:bg-mustard-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "Menyimpan..." : isEdit ? "Simpan perubahan" : "Tambah produk"}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+              className="flex-1 rounded-tag border border-bone-200/15 bg-pine-950 px-4 py-2 text-sm font-medium text-bone-100 hover:border-mustard-500 disabled:opacity-50"
+            >
+              Batal
+            </button>
           </div>
         </div>
-
-        {error && <p className="mt-3 font-mono text-xs text-brick-500">{error}</p>}
-
-        <button
-          type="submit"
-          disabled={saving || uploading}
-          className="mt-6 w-full rounded-tag bg-mustard-500 py-2.5 font-display text-sm font-medium text-pine-950 transition-colors hover:bg-mustard-400 disabled:opacity-50"
-        >
-          {saving ? "Menyimpan..." : isEdit ? "Simpan perubahan" : "Simpan produk"}
-        </button>
       </form>
     </div>
   );
