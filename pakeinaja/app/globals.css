@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "Inter", "Segoe UI", sans-serif;
+  --font-tag: "IBM Plex Mono", "Courier New", monospace;
+}
+
+html,
+body {
+  background-color: #141d17;
+  color: #f1ecdf;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+/* --- Signature element: the hang-tag --- */
+.hang-tag {
+  position: relative;
+}
+
+.hang-tag::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #141d17;
+  border: 1.5px solid #e6dfc9;
+  z-index: 10;
+}
+
+.hang-tag::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 19px;
+  width: 22px;
+  height: 22px;
+  border: 1.5px dashed #e6dfc9;
+  border-radius: 999px;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotate(35deg);
+  z-index: 9;
+  opacity: 0.7;
+}
+
+.stitch-border {
+  border: 1.5px dashed rgba(230, 223, 201, 0.35);
+}
+
+.tag-rotate {
+  transform: rotate(-2deg);
+}
+
+::selection {
+  background: #d9a441;
+  color: #141d17;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+  }
+}
