@@ -9,7 +9,7 @@ export async function POST(req) {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     console.error("[api/upload] BLOB_READ_WRITE_TOKEN env var not set");
     return NextResponse.json(
-      { error: "Server misconfiguration: Blob storage not configured" },
+      { error: "Server misconfiguration: Blob storage not configured (missing BLOB_READ_WRITE_TOKEN)" },
       { status: 500 }
     );
   }
@@ -51,7 +51,8 @@ export async function POST(req) {
 
     return NextResponse.json({ url: blob.url });
   } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ error: error.message || "Upload gagal." }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("[api/upload] Upload error:", error);
+    return NextResponse.json({ error: msg || "Upload gagal." }, { status: 500 });
   }
 }
