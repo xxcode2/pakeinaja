@@ -3,11 +3,16 @@ import { getProduct, updateProduct, deleteProduct } from "@/lib/kv";
 import { isAuthed } from "@/lib/auth";
 
 export async function GET(req, { params }) {
-  const product = await getProduct(params.id);
-  if (!product) {
-    return NextResponse.json({ error: "Produk tidak ditemukan." }, { status: 404 });
+  try {
+    const product = await getProduct(params.id);
+    if (!product) {
+      return NextResponse.json({ error: "Produk tidak ditemukan." }, { status: 404 });
+    }
+    return NextResponse.json({ product });
+  } catch (e) {
+    console.error("[api/products/[id]] GET error:", e);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-  return NextResponse.json({ product });
 }
 
 export async function PATCH(req, { params }) {

@@ -3,8 +3,13 @@ import { getAllProducts, createProduct } from "@/lib/kv";
 import { isAuthed } from "@/lib/auth";
 
 export async function GET() {
-  const products = await getAllProducts();
-  return NextResponse.json({ products });
+  try {
+    const products = await getAllProducts();
+    return NextResponse.json({ products });
+  } catch (e) {
+    console.error("[api/products] GET error:", e);
+    return NextResponse.json({ products: [] });
+  }
 }
 
 export async function POST(req) {
