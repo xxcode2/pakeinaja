@@ -5,6 +5,15 @@ import { isAuthed } from "@/lib/auth";
 export const runtime = "nodejs";
 
 export async function POST(req) {
+  // Ensure Blob token is configured
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error("[api/upload] BLOB_READ_WRITE_TOKEN env var not set");
+    return NextResponse.json(
+      { error: "Server misconfiguration: Blob storage not configured" },
+      { status: 500 }
+    );
+  }
+
   if (!isAuthed()) {
     return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
   }
@@ -43,6 +52,6 @@ export async function POST(req) {
     return NextResponse.json({ url: blob.url });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: error.message || "Upload gagal." }, { status: 400 });
+    return NextResponse.json({ error: error.message || "Upload gagal." }, { status: 500 });
   }
 }
