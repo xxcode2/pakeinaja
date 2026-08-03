@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
 }
 
 export async function PATCH(req, { params }) {
-  if (!isAuthed()) {
+  if (!(await isAuthed())) {
     return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
   }
   const patch = await req.json();
@@ -28,7 +28,7 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  if (!isAuthed()) {
+  if (!(await isAuthed())) {
     return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
   }
   const ok = await deleteProduct(params.id);

@@ -13,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  if (!isAuthed()) {
+  if (!(await isAuthed())) {
     return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
   }
 

@@ -17,7 +17,7 @@ export async function POST(req) {
   // Auth check
   let authed = false;
   try {
-    authed = isAuthed();
+    authed = await isAuthed();
   } catch (e) {
     console.error("[api/upload] isAuthed threw:", e);
   }
@@ -56,7 +56,6 @@ export async function POST(req) {
       addRandomSuffix: false,
     });
 
-    // Ensure blob has url
     const url = blob?.url;
     if (!url) {
       console.error("[api/upload] put() returned no url:", blob);
@@ -67,7 +66,6 @@ export async function POST(req) {
   } catch (error) {
     const msg = error?.message ?? String(error);
     console.error("[api/upload] Upload error:", error);
-    // Always return JSON, never let the response be empty
     return NextResponse.json({ error: msg || "Upload gagal." }, { status: 500 });
   }
 }
