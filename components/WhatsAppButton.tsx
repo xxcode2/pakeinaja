@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useState } from "framer-motion";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import { formatRupiah, buildWaLink } from "@/lib/whatsapp";
 import { MessageSquare, Check, Loader2, ExternalLink, Tag } from "lucide-react";
 

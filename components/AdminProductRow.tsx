@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useState } from "react";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import Image from "next/image";
 import { formatRupiah } from "@/lib/whatsapp";
 import { Edit, Trash2, Eye, Tag, Truck, CheckCircle, XCircle, MoreVertical } from "lucide-react";
