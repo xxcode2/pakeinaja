@@ -4,7 +4,8 @@ import { isAuthed } from "@/lib/auth";
 
 export async function GET(req, { params }) {
   try {
-    const product = await getProduct(params.id);
+    const { id } = await params;
+    const product = await getProduct(id);
     if (!product) {
       return NextResponse.json({ error: "Produk tidak ditemukan." }, { status: 404 });
     }
@@ -19,8 +20,9 @@ export async function PATCH(req, { params }) {
   if (!(await isAuthed())) {
     return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
   }
+  const { id } = await params;
   const patch = await req.json();
-  const product = await updateProduct(params.id, patch);
+  const product = await updateProduct(id, patch);
   if (!product) {
     return NextResponse.json({ error: "Produk tidak ditemukan." }, { status: 404 });
   }
@@ -31,7 +33,8 @@ export async function DELETE(req, { params }) {
   if (!(await isAuthed())) {
     return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
   }
-  const ok = await deleteProduct(params.id);
+  const { id } = await params;
+  const ok = await deleteProduct(id);
   if (!ok) {
     return NextResponse.json({ error: "Produk tidak ditemukan." }, { status: 404 });
   }
