@@ -14,7 +14,14 @@ export async function POST(req) {
     );
   }
 
-  if (!isAuthed()) {
+  // Auth check
+  let authed = false;
+  try {
+    authed = isAuthed();
+  } catch (e) {
+    console.error("[api/upload] isAuthed threw:", e);
+  }
+  if (!authed) {
     return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
   }
 
@@ -40,7 +47,7 @@ export async function POST(req) {
 
     // Generate unique filename with random suffix
     const randomSuffix = Math.random().toString(36).substring(2, 10);
-    const ext = file.name.split(".").pop() || "jpg";
+    const ext = file.name?.split(".").pop() || "jpg";
     const pathname = `${randomSuffix}.${ext}`;
 
     // Upload directly to Vercel Blob from server (no CORS issues)
@@ -49,10 +56,18 @@ export async function POST(req) {
       addRandomSuffix: false,
     });
 
-    return NextResponse.json({ url: blob.url });
+    // Ensure blob has url
+    const url = blob?.url;
+    if (!url) {
+      console.error("[api/upload] put() returned no url:", blob);
+      return NextResponse.json({ error: "Upload gagal: tidak ada URL dari storage." }, { status: 500 });
+    }
+
+    return NextResponse.json({ url });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
+    const msg = error?.message ?? String(error);
     console.error("[api/upload] Upload error:", error);
+    // Always return JSON, never let the response be empty
     return NextResponse.json({ error: msg || "Upload gagal." }, { status: 500 });
   }
 }
