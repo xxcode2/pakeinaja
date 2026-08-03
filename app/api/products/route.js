@@ -14,11 +14,24 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    if (!(await isAuthed())) {
+    // auth
+    let authed = false;
+    try {
+      authed = await isAuthed();
+    } catch (e) {
+      console.error("[api/products] isAuthed error:", e);
+    }
+    if (!authed) {
       return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
     }
 
-    const body = await req.json();
+    // parse body safely
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Body tidak valid JSON." }, { status: 400 });
+    }
 
     if (!body.name || !body.price) {
       return NextResponse.json(
